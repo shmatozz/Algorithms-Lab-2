@@ -17,5 +17,4 @@ fun main() {
     println("Map answers:")
     printAnswers(testPoints, mapAnswers)
 
-    println(bruteForceAnswers.contentEquals(mapAnswers))
 }

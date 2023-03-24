@@ -1,5 +1,4 @@
-import java.text.ParsePosition
-
+// getting array where indexes is zipped coordinates
 fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<Int>> {
     val zippedX = Array(rectangles.size * 2) { 0 }
     val zippedY = Array(rectangles.size * 2) { 0 }
@@ -19,74 +18,54 @@ fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<In
     return Pair(zippedX.distinct(), zippedY.distinct())
 }
 
-// find position with binary search
-fun findPos(array: List<Int>, value: Int) : Int{
-    var left = 0; var right = array.size - 1
-    while (left < right) {
-        val middle = (right + left) / 2
-        if (array[middle] == value) {
-            return middle
-        } else if (array[middle] < value) {
-            left = middle + 1
-        } else if (array[middle] > value) {
-            right = middle - 1
-        }
-    }
-    return right
-}
-
-fun findPointPosition(array: List<Int>, value: Int) : Int {
-    if (value == array.last()) return array.size - 2
+// find position of point using upper_bound algorithm from cpp algorithm lib
+fun findPosition(array: List<Int>, value: Int) : Int{
     if (value > array.last()) return -1
     if (value < array.first()) return -1
-    var left = 0; var right = array.size - 2
-    while (left < right) {
-        val middle = (right + left) / 2
-        if (array[middle] <= value && value < array[middle + 1]) {
-            return middle
-        } else if (array[middle] > value) {
-            right = middle - 1
+    if (value == array.last()) return array.size - 1
+    var begin = 0;
+    var count = array.size; var step: Int
+    while (count > 0) {
+        var cur = begin
+        step = count / 2
+        cur += step
+        if (value >= array[cur]) {
+            begin = cur + 1
+            count -= step + 1
         } else {
-            left = middle + 1
+            count = step
         }
     }
-    return right
+    return begin - 1
 }
-
 
 fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int> {
     val answersForPoints = Array(points.size) { 0 }
     val (zippedX, zippedY) = getZippedCoordinates(rectangles)
     if (zippedX.isEmpty()) return answersForPoints
-    val mapMatrix = Array(zippedY.size - 1) { Array(zippedX.size - 1) { 0 } }
+    val mapMatrix = Array(zippedY.size) { Array(zippedX.size) { 0 } }
 
     // filling map
     for (rectangle in rectangles) {
-        val indexStartX = findPos(zippedX, rectangle.left.x)
-        val indexStartY = findPos(zippedY, rectangle.left.y)
-        val indexEndX = findPos(zippedX, rectangle.right.x)
-        val indexEndY = findPos(zippedY, rectangle.right.y)
-        for (i in indexStartY until   indexEndY) {
-            for (j in indexStartX until   indexEndX) {
+        val indexStartX = findPosition(zippedX, rectangle.left.x)
+        val indexStartY = findPosition(zippedY, rectangle.left.y)
+        val indexEndX = findPosition(zippedX, rectangle.right.x)
+        val indexEndY = findPosition(zippedY, rectangle.right.y)
+        for (i in indexStartY ..  indexEndY ) {
+            for (j in indexStartX ..   indexEndX) {
                 mapMatrix[i][j]++
             }
         }
     }
 
+
     // find answers for points
     for (i in points.indices) {
-        var positionX = findPointPosition(zippedX, points[i].x)
-        var positionY = findPointPosition(zippedY, points[i].y)
-
+        val positionX = findPosition(zippedX, points[i].x)
+        val positionY = findPosition(zippedY, points[i].y)
         if (positionX == -1 || positionY == -1) {
             answersForPoints[i] = 0
         } else {
-            if (zippedY[positionY] == points[i].y && positionY > (zippedY.size - 2) / 2) {
-                positionY--
-            }
-            if (zippedX[positionX] == points[i].x && positionX > (zippedX.size - 2) / 2) {
-                positionX--
-            }
             answersForPoints[i] = mapMatrix[positionY][positionX]
         }
     }
