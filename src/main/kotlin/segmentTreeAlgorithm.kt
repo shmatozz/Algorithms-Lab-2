@@ -1,0 +1,119 @@
+class Event (val x: Int,
+             val yBegin: Int,
+             val yEnd: Int,
+             val status: Int)
+
+class Node (var sum: Int = 0,
+            var left: Node? = null,
+            var right: Node? = null,
+            var leftIndex: Int = 0,
+            var rightIndex: Int = 0)
+
+// building empty segment tree
+fun buildEmptyTree(array: Array<Int>, leftIndex: Int, rightIndex: Int): Node {
+    // if reached half interval [leftIndex, leftIndex + 1)
+    if (leftIndex + 1 == rightIndex) {
+        return Node(array[leftIndex], null, null, leftIndex, rightIndex)
+    }
+
+    val mid = (leftIndex + rightIndex) / 2
+    val left = buildEmptyTree(array, leftIndex, mid)
+    val right = buildEmptyTree(array, mid, rightIndex)
+
+    return Node(left.sum + right.sum, left, right, left.leftIndex, right.rightIndex)
+}
+
+// get number of rectangles for point
+fun getAnswer(node: Node?, target: Int): Int {
+    // if node == null -> lower level reached
+    if (node != null) {
+        val mid = (node.leftIndex + node.rightIndex) / 2
+        return if (target < mid) {
+            node.sum + getAnswer(node.left, target)
+        } else {
+            node.sum + getAnswer(node.right, target)
+        }
+    }
+    return 0
+}
+
+// adding to segment tree
+fun add(node: Node, start: Int, end: Int, value: Int) : Node {
+    // if current node is in interval, return *new persistent* node
+    if (start <= node.leftIndex && node.rightIndex <= end) {
+        return Node(node.sum + value, node.left, node.right, node.leftIndex, node.rightIndex)
+    }
+
+    // if current node is not in interval, return node
+    if (node.rightIndex <= start || end <= node.leftIndex) {
+        return node
+    }
+
+    // creating *new persistent* node
+    val new = Node(node.sum, node.left, node.right, node.leftIndex, node.rightIndex)
+
+    // checking left node
+    new.left = add(new.left!!, start, end, value)
+
+    // checking right node
+    new.right = add(new.right!!, start, end, value)
+
+    // return *new persistent* node
+    return new
+}
+
+fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int> {
+    val answersForPoints = Array(points.size) { 0 }
+
+    // getting zipped coordinates of rectangles
+    val (zippedX, zippedY) = getZippedCoordinates(rectangles)
+
+    if (zippedX.isEmpty()) return answersForPoints      // if number of rectangles == 0, return array of 0 as answer
+    val events = Array(rectangles.size * 2) { Event(0, 0, 0, -1) } // beginning and ending of rectangle existence
+    val roots = Array(events.size) { Node() }   // array of persistent tree roots
+
+    // filling array of events
+    var it = 0
+    for (rectangle in rectangles) {
+        events[it++] = Event(findPosition(zippedX, rectangle.left.x),    // position on zipped X coordinate
+                            findPosition(zippedY, rectangle.left.y),    // lower bound of rectangle
+                            findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
+                            1)  // status == 1 means beginning of rectangle
+        events[it++] = Event(findPosition(zippedX, rectangle.right.x + 1),
+                            findPosition(zippedY, rectangle.left.y),
+                            findPosition(zippedY, rectangle.right.y + 1),
+                            -1) // status == -1 means ending of rectangle
+    }
+    // sorting events array by X coordinate
+    events.sortBy { it.x }
+
+    // building empty segment tree
+    var root = buildEmptyTree(Array(zippedY.size) { 0 }, 0, zippedY.size)
+
+    // processing events
+    var lastX = events[0].x
+    it = 0
+    for (event in events) {
+        // if finished processing all events for the current X
+        if (lastX != event.x) {
+            roots[it++] = root   // add final root in array of roots
+            lastX = event.x      // update last X
+        }
+
+        root = add(root, event.yBegin, event.yEnd, event.status)    // add new event to tree
+    }
+
+    // search answers to given points
+    for (i in points.indices) {
+        val positionX = findPosition(zippedX, points[i].x)  // get indexes of point position on the map
+        val positionY = findPosition(zippedY, points[i].y)  //
+
+        if (positionX == -1 || positionY == -1) {   // if point out of borders
+            answersForPoints[i] = 0
+        } else {
+            answersForPoints[i] = getAnswer(roots[positionX], positionY)
+        }
+    }
+
+    return answersForPoints
+}

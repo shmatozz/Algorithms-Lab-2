@@ -17,4 +17,7 @@ fun main() {
     println("Map answers:")
     printAnswers(testPoints, mapAnswers)
 
+    val segmentTreeAnswers = segmentTreeAlgorithm(rectangles, testPoints)
+    println("Persistent Segment Tree answers:")
+    printAnswers(testPoints, segmentTreeAnswers)
 }
