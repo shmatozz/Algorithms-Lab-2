@@ -1,5 +1,5 @@
 fun bruteForceAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int> {
-    val answersForPoints = Array<Int>(points.size) { 0 }
+    val answersForPoints = Array(points.size) { 0 } // Array of answers to each given point
 
     for (i in points.indices) {
         for (rectangle in rectangles) {
