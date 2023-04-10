@@ -1,7 +1,7 @@
 // getting array where indexes is zipped coordinates
 fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<Int>> {
-    val zippedX = Array(rectangles.size * 2) { 0 }
-    val zippedY = Array(rectangles.size * 2) { 0 }
+    val zippedX = Array(rectangles.size * 3) { 0 }
+    val zippedY = Array(rectangles.size * 3) { 0 }
     var j = 0
 
     // get zipped coordinates for building matrix
@@ -9,8 +9,10 @@ fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<In
         zippedX[j] = rectangle.left.x
         zippedY[j] = rectangle.left.y
         zippedX[j + 1] = rectangle.right.x
+        zippedX[j + 2] = rectangle.right.x + 1
         zippedY[j + 1] = rectangle.right.y
-        j += 2
+        zippedY[j + 2] = rectangle.right.y + 1
+        j += 3
     }
     zippedX.sort()
     zippedY.sort()
@@ -18,12 +20,9 @@ fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<In
     return Pair(zippedX.distinct(), zippedY.distinct())
 }
 
-// find position of point using upper_bound algorithm from cpp algorithm lib
+// find position of point using lower_bound algorithm
 fun findPosition(array: List<Int>, value: Int) : Int{
-    if (value > array.last()) return -1
-    if (value < array.first()) return -1
-    if (value == array.last()) return array.size - 1
-    var begin = 0;
+    var begin = 0
     var count = array.size; var step: Int
     while (count > 0) {
         var cur = begin
@@ -49,15 +48,15 @@ fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int
     for (rectangle in rectangles) {
         val indexStartX = findPosition(zippedX, rectangle.left.x)
         val indexStartY = findPosition(zippedY, rectangle.left.y)
-        val indexEndX = findPosition(zippedX, rectangle.right.x)
-        val indexEndY = findPosition(zippedY, rectangle.right.y)
-        for (i in indexStartY ..  indexEndY ) {
-            for (j in indexStartX ..   indexEndX) {
+        val indexEndX = findPosition(zippedX, rectangle.right.x + 1)
+        val indexEndY = findPosition(zippedY, rectangle.right.y + 1)
+        for (i in indexStartY until indexEndY) {
+            for (j in indexStartX until indexEndX)  {
                 mapMatrix[i][j]++
             }
         }
     }
-
+    printMapMatrix(mapMatrix, zippedX, zippedY)
 
     // find answers for points
     for (i in points.indices) {

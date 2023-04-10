@@ -25,10 +25,14 @@ fun printAnswers(points: Array<Point>, answers: Array<Int>) {
     println()
 }
 
-fun printMapMatrix(matrix: Array<Array<Int>>) {
-    for (rows in matrix) {
-        for (col in rows) {
-            print("$col ")
+fun printMapMatrix(matrix: Array<Array<Int>>, zippedX: List<Int>, zippedY: List<Int>) {
+    print("  ")
+    for (i in zippedX) print("%-4d".format(i))
+    println()
+    for (row in matrix.indices) {
+        print("%-4d".format(zippedY[row]))
+        for (col in matrix[row]) {
+            print("%-4d".format(col))
         }
         println()
     }
