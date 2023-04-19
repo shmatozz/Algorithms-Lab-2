@@ -62,13 +62,8 @@ fun add(node: Node, start: Int, end: Int, value: Int) : Node {
     return new
 }
 
-fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int> {
-    val answersForPoints = Array(points.size) { 0 }
-
-    // getting zipped coordinates of rectangles
-    val (zippedX, zippedY) = getZippedCoordinates(rectangles)
-
-    if (zippedX.isEmpty()) return answersForPoints      // if number of rectangles == 0, return array of 0 as answer
+// algorithm of building persistent segment tree on rectangles existence
+fun buildPersistentSegmentTree(rectangles: Array<Rectangle>, zippedX: List<Int>, zippedY: List<Int>) : Array<Node> {
     val events = Array(rectangles.size * 2) { Event(0, 0, 0, -1) } // beginning and ending of rectangle existence
     val roots = Array(events.size) { Node() }   // array of persistent tree roots
 
@@ -76,13 +71,13 @@ fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : A
     var it = 0
     for (rectangle in rectangles) {
         events[it++] = Event(findPosition(zippedX, rectangle.left.x),    // position on zipped X coordinate
-                            findPosition(zippedY, rectangle.left.y),    // lower bound of rectangle
-                            findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
-                            1)  // status == 1 means beginning of rectangle
+            findPosition(zippedY, rectangle.left.y),    // lower bound of rectangle
+            findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
+            1)  // status == 1 means beginning of rectangle
         events[it++] = Event(findPosition(zippedX, rectangle.right.x + 1),
-                            findPosition(zippedY, rectangle.left.y),
-                            findPosition(zippedY, rectangle.right.y + 1),
-                            -1) // status == -1 means ending of rectangle
+            findPosition(zippedY, rectangle.left.y),
+            findPosition(zippedY, rectangle.right.y + 1),
+            -1) // status == -1 means ending of rectangle
     }
     // sorting events array by X coordinate
     events.sortBy { it.x }
@@ -103,7 +98,14 @@ fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : A
         root = add(root, event.yBegin, event.yEnd, event.status)    // add new event to tree
     }
 
-    // search answers to given points
+    return roots
+}
+
+// getting answers
+fun getAnswersFromPersistentTree(points: Array<Point>, roots: Array<Node>, zippedX: List<Int>, zippedY: List<Int>) : Array<Int> {
+    val answersForPoints = Array(points.size) { 0 }
+
+    // searching answers for given points
     for (i in points.indices) {
         val positionX = findPosition(zippedX, points[i].x)  // get indexes of point position on the map
         val positionY = findPosition(zippedY, points[i].y)  //
@@ -116,4 +118,20 @@ fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : A
     }
 
     return answersForPoints
+}
+
+fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>): Array<Int> {
+    // if number of rectangles == 0, return array of 0 as answer
+    if (rectangles.isEmpty()) {
+        return Array(points.size) { 0 }
+    }
+
+    // getting zipped coordinates of rectangles
+    val (zippedX, zippedY) = getZippedCoordinates(rectangles)
+    // getting array of persistent segment tree roots for every event
+    val persistentTreeRoots = buildPersistentSegmentTree(rectangles, zippedX, zippedY)
+
+    // getting number of rectangles for points
+
+    return getAnswersFromPersistentTree(points, persistentTreeRoots, zippedX, zippedY)
 }

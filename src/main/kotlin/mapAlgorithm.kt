@@ -1,10 +1,5 @@
-fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int> {
-    val answersForPoints = Array(points.size) { 0 }
-
-    // getting zipped coordinates of rectangles
-    val (zippedX, zippedY) = getZippedCoordinates(rectangles)
-
-    if (zippedX.isEmpty()) return answersForPoints      // if number of rectangles == 0, return array of 0 as answer
+fun generateMap(rectangles: Array<Rectangle>, zippedX: List<Int>, zippedY: List<Int>) : Array<Array<Int>> {
+    // creating empty map
     val mapMatrix = Array(zippedY.size) { Array(zippedX.size) { 0 } }
 
     // filling map
@@ -21,6 +16,12 @@ fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int
         }
     }
 
+    return mapMatrix
+}
+
+fun getAnswersFromMap(mapMatrix: Array<Array<Int>>, points: Array<Point>, zippedX: List<Int>, zippedY: List<Int>) : Array<Int> {
+    val answersForPoints = Array(points.size) { 0 }
+
     // search answers to given points
     for (i in points.indices) {
         val positionX = findPosition(zippedX, points[i].x)  // get indexes of point position on the map
@@ -34,4 +35,17 @@ fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Array<Int
     }
 
     return answersForPoints
+}
+
+fun mapAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>): Array<Int> {
+    // if number of rectangles == 0, return array of 0 as answer
+    if (rectangles.isEmpty()) {
+        return Array(points.size) { 0 }
+    }
+
+    // getting zipped coordinates of rectangles
+    val (zippedX, zippedY) = getZippedCoordinates(rectangles)
+    val mapMatrix = generateMap(rectangles, zippedX, zippedY)
+
+    return getAnswersFromMap(mapMatrix, points, zippedX, zippedY)
 }

@@ -52,14 +52,14 @@ fun getRectanglesArray(n: Int) : Array<Rectangle> {
 }
 
 // get coordinates of points (from console / formula generation)
-fun getTestPointsArray(n: Int) : Array<Point> {
-    val testPoints: Array<Point> = Array(n) { Point(0, 0) }
+fun getTestPointsArray(m: Int, n: Int) : Array<Point> {
+    val testPoints: Array<Point> = Array(m) { Point(0, 0) }
 
-    for (i in 0 until n) {
+    for (i in 0 until m) {
         //val (x, y) = readln().split(' ').map { it.toInt() }
         //testPoints[i] = Point(x, y)
-        testPoints[i] = Point((((101 * i).toDouble().pow(31)) % (20 * n)).toInt(),
-                               ((103 * i).toDouble().pow(31) % (20 * n)).toInt())
+        testPoints[i] = Point((((10007 * i).toDouble().pow(31)) % (20 * n)).toInt(),
+                               ((10009 * i).toDouble().pow(31) % (20 * n)).toInt())
     }
 
     return testPoints

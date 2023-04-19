@@ -2,7 +2,7 @@ fun main() {
     val n = readln().toInt()
     val rectangles = getRectanglesArray(n)
     val m = readln().toInt()
-    val testPoints = getTestPointsArray(m)
+    val testPoints = getTestPointsArray(m, n)
 
     println("Rectangles")
     printArrayRectangles(rectangles)
@@ -10,14 +10,11 @@ fun main() {
     printArrayPoints(testPoints)
 
     val bruteForceAnswers = bruteForceAlgorithm(rectangles, testPoints)
-    println("BruteForce answers:")
-    printAnswers(testPoints, bruteForceAnswers)
+    //printAnswers(testPoints, bruteForceAnswers)
 
     val mapAnswers = mapAlgorithm(rectangles, testPoints)
-    println("Map answers:")
-    printAnswers(testPoints, mapAnswers)
+    //printAnswers(testPoints, mapAnswers)
 
     val segmentTreeAnswers = segmentTreeAlgorithm(rectangles, testPoints)
-    println("Persistent Segment Tree answers:")
-    printAnswers(testPoints, segmentTreeAnswers)
+    //printAnswers(testPoints, segmentTreeAnswers)
 }
