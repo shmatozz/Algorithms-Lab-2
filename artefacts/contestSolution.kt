@@ -1,3 +1,6 @@
+class Point (val x: Int, val y:Int)
+class Rectangle (val left: Point, val right: Point)
+
 class Event (val x: Int,
              val yBegin: Int,
              val yEnd: Int,
@@ -8,6 +11,69 @@ class Node (var sum: Int = 0,
             var right: Node? = null,
             var leftIndex: Int = 0,
             var rightIndex: Int = 0)
+
+fun getRectanglesArray(n: Int) : Array<Rectangle> {
+    val rectangles: Array<Rectangle> = Array(n) { Rectangle(Point(0, 0), Point(0, 0)) }
+
+    for (i in 0 until n) {
+        val (x1, y1, x2, y2) = readln().split(' ').map {it.toInt()}
+        rectangles[i] = Rectangle(Point(x1, y1), Point(x2, y2))
+        //rectangles[i] = Rectangle(Point(10 * i, 10 * i), Point(10 * (2 * n - i), 10 * (2 * n - i)))
+    }
+
+    return rectangles
+}
+
+fun getTestPointsArray(n: Int) : Array<Point> {
+    val testPoints: Array<Point> = Array(n) { Point(0, 0) }
+
+    for (i in 0 until n) {
+        val (x, y) = readln().split(' ').map { it.toInt() }
+        testPoints[i] = Point(x, y)
+        //testPoints[i] = Point((((101 * i).toDouble().pow(31)) % (20 * n)).toInt(), ((103 * i).toDouble().pow(31) % (20 * n)).toInt())
+    }
+
+    return testPoints
+}
+
+// getting array where indexes is zipped coordinates
+fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<Int>> {
+    val zippedX = Array(rectangles.size * 2) { 0 }
+    val zippedY = Array(rectangles.size * 2) { 0 }
+    var j = 0
+
+    // get zipped coordinates for building matrix
+    for (rectangle in rectangles) {
+        zippedX[j] = rectangle.left.x
+        zippedY[j] = rectangle.left.y
+        zippedX[j + 1] = rectangle.right.x + 1
+        zippedY[j + 1] = rectangle.right.y + 1
+        j += 2
+    }
+    // sorting zipped coordinates
+    zippedX.sort()
+    zippedY.sort()
+
+    return Pair(zippedX.distinct(), zippedY.distinct())
+}
+
+// find position of point using lower_bound algorithm
+fun findPosition(array: List<Int>, value: Int) : Int {
+    var begin = 0
+    var count = array.size; var step: Int
+    while (count > 0) {
+        var cur = begin
+        step = count / 2
+        cur += step
+        if (value >= array[cur]) {
+            begin = cur + 1
+            count -= step + 1
+        } else {
+            count = step
+        }
+    }
+    return begin - 1
+}
 
 // building empty segment tree
 fun buildEmptyTree(array: Array<Int>, leftIndex: Int, rightIndex: Int): Node {
@@ -70,14 +136,14 @@ fun buildPersistentSegmentTree(rectangles: Array<Rectangle>, zippedX: List<Int>,
     // filling array of events
     var it = 0
     for (rectangle in rectangles) {
-        events[it++] = Event(findPosition(zippedX, rectangle.left.x),            // position on zipped X coordinate
-                             findPosition(zippedY, rectangle.left.y),            // lower bound of rectangle
-                             findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
-                             1)  // status == 1 means beginning of rectangle
+        events[it++] = Event(findPosition(zippedX, rectangle.left.x),    // position on zipped X coordinate
+            findPosition(zippedY, rectangle.left.y),    // lower bound of rectangle
+            findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
+            1)  // status == 1 means beginning of rectangle
         events[it++] = Event(findPosition(zippedX, rectangle.right.x + 1),
-                             findPosition(zippedY, rectangle.left.y),
-                             findPosition(zippedY, rectangle.right.y + 1),
-                             -1) // status == -1 means ending of rectangle
+            findPosition(zippedY, rectangle.left.y),
+            findPosition(zippedY, rectangle.right.y + 1),
+            -1) // status == -1 means ending of rectangle
     }
     // sorting events array by X coordinate
     events.sortBy { it.x }
@@ -134,4 +200,15 @@ fun segmentTreeAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>): Ar
     // getting number of rectangles for points
 
     return getAnswersFromPersistentTree(points, persistentTreeRoots, zippedX, zippedY)
+}
+
+fun main() {
+    val n = readln().toInt()
+    val rectangles = getRectanglesArray(n)
+    val m = readln().toInt()
+    val testPoints = getTestPointsArray(m)
+
+    val segmentTreeAnswers = segmentTreeAlgorithm(rectangles, testPoints)
+
+    for (i in segmentTreeAnswers) print("$i ")
 }

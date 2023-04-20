@@ -47,7 +47,7 @@ fun main() {
         count *= 2
     }
 
-    val path = "C:\\Users\\matve\\IdeaProjects\\Algorithms-Labs\\Lab-2\\src\\main\\times.txt"
+    val path = "C:\\Users\\matve\\IdeaProjects\\Algorithms-Labs\\Lab-2\\artefacts\\times.txt"
     File(path).printWriter().use { out ->
         timesBruteForcePrep.forEach {
             out.print("$it ")

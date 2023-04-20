@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.Assertions.*
+
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import kotlin.math.pow
 
@@ -65,6 +66,26 @@ class SegmentTreeAlgorithmKtTest {
 
         assertArrayEquals(
             arrayOf(1, 1, 2, 3, 0),
+            answers
+        )
+    }
+
+    @Test
+    fun gapTest() {
+        val rectangles = arrayOf(
+            Rectangle(Point(0, 0), Point(2, 2)),
+            Rectangle(Point(10, 0), Point(20, 2))
+        )
+        val testPoints = arrayOf(
+            Point(1, 1),
+            Point(15, 1),
+            Point(5, 1),
+        )
+
+        val answers = segmentTreeAlgorithm(rectangles, testPoints)
+
+        assertArrayEquals(
+            arrayOf(1, 1, 0),
             answers
         )
     }
