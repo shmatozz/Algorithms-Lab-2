@@ -75,8 +75,8 @@ fun bruteForceAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Ar
 
     for (i in points.indices) {
         for (j in rectangles.indices) {
-            if (points[i].x >= rectangles[j].left.x && points[i].x <= rectangles[j].right.x &&
-                points[i].y >= rectangles[j].left.y && points[i].y <= rectangles[j].right.y) {
+            if (points[i].x >= rectangles[j].left.x && points[i].x < rectangles[j].right.x &&
+                points[i].y >= rectangles[j].left.y && points[i].y < rectangles[j].right.y) {
                 answersForPoints[i]++
             }
         }
@@ -107,8 +107,8 @@ fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<In
     for (rectangle in rectangles) {
         zippedX[j] = rectangle.left.x
         zippedY[j] = rectangle.left.y
-        zippedX[j + 1] = rectangle.right.x + 1
-        zippedY[j + 1] = rectangle.right.y + 1
+        zippedX[j + 1] = rectangle.right.x
+        zippedY[j + 1] = rectangle.right.y
         j += 2
     }
     // sorting zipped coordinates
@@ -131,8 +131,8 @@ fun generateMap(rectangles: Array<Rectangle>, zippedX: List<Int>, zippedY: List<
     for (rectangle in rectangles) {
         val indexStartX = findPosition(zippedX, rectangle.left.x)              
         val indexStartY = findPosition(zippedY, rectangle.left.y)              
-        val indexEndX = findPosition(zippedX, rectangle.right.x + 1)     
-        val indexEndY = findPosition(zippedY, rectangle.right.y + 1)        
+        val indexEndX = findPosition(zippedX, rectangle.right.x)     
+        val indexEndY = findPosition(zippedY, rectangle.right.y)        
 
         for (i in indexStartY until indexEndY) {
             for (j in indexStartX until indexEndX)  {
