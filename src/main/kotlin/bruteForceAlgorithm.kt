@@ -3,8 +3,8 @@ fun bruteForceAlgorithm(rectangles: Array<Rectangle>, points: Array<Point>) : Ar
 
     for (i in points.indices) {
         for (j in rectangles.indices) {
-            if (points[i].x >= rectangles[j].left.x && points[i].x <= rectangles[j].right.x &&
-                points[i].y >= rectangles[j].left.y && points[i].y <= rectangles[j].right.y) {
+            if (points[i].x >= rectangles[j].left.x && points[i].x < rectangles[j].right.x &&
+                points[i].y >= rectangles[j].left.y && points[i].y < rectangles[j].right.y) {
                 answersForPoints[i]++
             }
         }

@@ -6,8 +6,8 @@ fun generateMap(rectangles: Array<Rectangle>, zippedX: List<Int>, zippedY: List<
     for (rectangle in rectangles) {
         val indexStartX = findPosition(zippedX, rectangle.left.x)              // get indexes of rectangle coordinates to fill matrix
         val indexStartY = findPosition(zippedY, rectangle.left.y)              //
-        val indexEndX = findPosition(zippedX, rectangle.right.x + 1)     //
-        val indexEndY = findPosition(zippedY, rectangle.right.y + 1)     //
+        val indexEndX = findPosition(zippedX, rectangle.right.x)     //
+        val indexEndY = findPosition(zippedY, rectangle.right.y)     //
 
         for (i in indexStartY until indexEndY) {
             for (j in indexStartX until indexEndX)  {

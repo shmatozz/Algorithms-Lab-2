@@ -1,6 +1,7 @@
-import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
+
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
 import kotlin.math.pow
 
 class MapAlgorithmTest {
@@ -29,7 +30,7 @@ class MapAlgorithmTest {
         val mapAnswers = mapAlgorithm(rectangles, testPoints)
 
         assertArrayEquals(
-            arrayOf(5, 5, 3, 0, 0, 5, 4, 2, 1),
+            arrayOf(5, 4, 1, 0, 0, 5, 4, 1, 1),
             mapAnswers
         )
     }
@@ -42,7 +43,7 @@ class MapAlgorithmTest {
         val mapAnswers = mapAlgorithm(rectangles, testPoints)
 
         assertArrayEquals(
-            arrayOf(1, 1, 7, 7, 3, 4, 3, 8, 15, 1, 18, 21, 7, 3, 13, 10, 14, 3, 10, 3, 4, 3, 22, 15, 13),
+            arrayOf(1, 1, 7, 7, 3, 4, 3, 8, 15, 1, 18, 21, 7, 3, 13, 10, 14, 3, 10, 3, 4, 3, 22, 15, 12),
             mapAnswers
         )
     }
@@ -66,7 +67,7 @@ class MapAlgorithmTest {
         val mapAnswers = mapAlgorithm(rectangles, testPoints)
 
         assertArrayEquals(
-            arrayOf(1, 1, 2, 3, 0),
+            arrayOf(1, 0, 2, 3, 0),
             mapAnswers
         )
     }
