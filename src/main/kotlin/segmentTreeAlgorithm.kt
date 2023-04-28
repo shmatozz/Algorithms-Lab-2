@@ -72,11 +72,11 @@ fun buildPersistentSegmentTree(rectangles: Array<Rectangle>, zippedX: List<Int>,
     for (rectangle in rectangles) {
         events[it++] = Event(findPosition(zippedX, rectangle.left.x),            // position on zipped X coordinate
                              findPosition(zippedY, rectangle.left.y),            // lower bound of rectangle
-                             findPosition(zippedY, rectangle.right.y + 1), // upper bound of rectangle
+                             findPosition(zippedY, rectangle.right.y), // upper bound of rectangle
                              1)  // status == 1 means beginning of rectangle
-        events[it++] = Event(findPosition(zippedX, rectangle.right.x + 1),
+        events[it++] = Event(findPosition(zippedX, rectangle.right.x),
                              findPosition(zippedY, rectangle.left.y),
-                             findPosition(zippedY, rectangle.right.y + 1),
+                             findPosition(zippedY, rectangle.right.y),
                              -1) // status == -1 means ending of rectangle
     }
     // sorting events array by X coordinate

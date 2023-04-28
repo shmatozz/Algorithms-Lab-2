@@ -74,12 +74,9 @@ fun getZippedCoordinates(rectangles: Array<Rectangle>) : Pair<List<Int>, List<In
     // get zipped coordinates for building matrix
     for (rectangle in rectangles) {
         zippedX[j] = rectangle.left.x
-        zippedY[j] = rectangle.left.y
-        //zippedX[j + 1] = rectangle.right.x
-        zippedX[j + 1] = rectangle.right.x + 1
-        //zippedY[j + 1] = rectangle.right.y
-        zippedY[j + 1] = rectangle.right.y + 1
-        j += 2
+        zippedY[j++] = rectangle.left.y
+        zippedX[j] = rectangle.right.x
+        zippedY[j++] = rectangle.right.y
     }
     // sorting zipped coordinates
     zippedX.sort()
